@@ -9,11 +9,10 @@ export const ROUTES: Routes = [
     path: '', 
     redirectTo: 'auth/login', 
     pathMatch: 'full' 
-  }, // Redirige a la página de inicio de sesión por defecto
+  },
   
   {
     path: 'auth',
-    // Carga perezosa del archivo de rutas de autenticación (contiene login, register, forgot-password)
     loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
 
@@ -22,19 +21,15 @@ export const ROUTES: Routes = [
   // ---------------------------------------------
   {
     path: 'admin',
-    // 2. Proteger esta ruta y todas sus hijas
     canActivate: [authGuard], 
     
-    // Usamos LayoutComponent como contenedor (Sidebar + RouterOutlet)
     loadComponent: () => import('./admin/layout/layout.component').then(m => m.LayoutComponent),
     children: [
-      // admin/ (Dashboard)
       { 
         path: '', 
         loadComponent: () => import('./admin/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent) 
       },
       
-      // Lazy Loading para las rutas CRUD de cada entidad
       {
         path: 'usuarios',
         loadChildren: () => import('./admin/usuarios/usuarios.routes').then(m => m.USUARIOS_ROUTES)
@@ -54,9 +49,6 @@ export const ROUTES: Routes = [
     ]
   },
 
-  // ---------------------------------------------
-  // RUTA WILDCARD (404 - Ruta no encontrada)
-  // ---------------------------------------------
   { 
     path: '**', 
     redirectTo: 'auth/login' 

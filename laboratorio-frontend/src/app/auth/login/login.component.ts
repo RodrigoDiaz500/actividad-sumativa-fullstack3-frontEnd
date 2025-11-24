@@ -7,7 +7,6 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  // ¡Importante! Añadir ReactiveFormsModule
   imports: [CommonModule, ReactiveFormsModule, RouterLink], 
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -24,7 +23,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Inicialización del formulario de login
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -38,20 +36,18 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       const { email, password } = this.loginForm.value;
 
-      // Llamada al servicio de autenticación
+
       this.authService.login({ email, password }).subscribe({
         next: (response) => {
-          // Asumiendo que el backend devuelve un objeto con 'token'
           this.authService.setToken(response.token);
           this.loading = false;
           
-          // Redirige al área de administración
+
           this.router.navigate(['/admin']);
         },
         error: (err) => {
           this.loading = false;
           
-          // Manejo de errores de autenticación (ej. 401 Unauthorized)
           if (err.status === 401) {
             this.errorMessage = 'Credenciales inválidas. Por favor, verifica tu email y contraseña.';
           } else {
@@ -62,7 +58,6 @@ export class LoginComponent implements OnInit {
       });
     } else {
       this.errorMessage = 'Por favor, introduce tu email y contraseña.';
-      // Marca todos los campos como 'touched' para mostrar mensajes de validación
       this.loginForm.markAllAsTouched();
     }
   }

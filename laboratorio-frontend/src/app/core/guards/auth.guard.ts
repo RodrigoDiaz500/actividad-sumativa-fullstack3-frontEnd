@@ -8,11 +8,11 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const token = authService.getToken();
 
-  // Verifica si existe el token (puedes añadir lógica de token expirado aquí)
+  
   if (token) {
-    return true; // Acceso permitido
+    return true; 
   } else {
-    // Acceso denegado, redirige al login
+    
     router.navigate(['/auth/login']);
     return false;
   }

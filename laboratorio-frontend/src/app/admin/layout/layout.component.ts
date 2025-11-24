@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Necesario para directivas comunes
+import { CommonModule } from '@angular/common'; 
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  // Añade las directivas de ruteo al array de imports
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive], 
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css'
