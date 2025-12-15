@@ -1,0 +1,99 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white text-center">
+                    <h2>Registro de Nuevo Examen</h2>
+                    <p class="mb-0">Completa los datos para solicitar un nuevo análisis.</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <form [formGroup]="examenForm" (ngSubmit)="onSubmit()">
+
+                        <h4 class="mb-3 text-primary">Datos del Paciente</h4>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="pacienteNombre" class="form-label">Nombre Completo</label>
+                                <input type="text" id="pacienteNombre" formControlName="pacienteNombre" class="form-control"
+                                       [class.is-invalid]="isInvalid('pacienteNombre')">
+                                <div *ngIf="isInvalid('pacienteNombre')" class="invalid-feedback">
+                                    El nombre del paciente es obligatorio.
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="pacienteRut" class="form-label">RUT</label>
+                                <input type="text" id="pacienteRut" formControlName="pacienteRut" class="form-control"
+                                       [class.is-invalid]="isInvalid('pacienteRut')">
+                                <div *ngIf="isInvalid('pacienteRut')" class="invalid-feedback">
+                                    <span *ngIf="examenForm.get('pacienteRut')?.hasError('required')">El RUT es obligatorio.</span>
+                                    <span *ngIf="examenForm.get('pacienteRut')?.hasError('pattern')">Formato RUT inválido (Ej: 12345678-9).</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 class="mb-3 mt-4 text-primary">Detalles del Análisis</h4>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="tipoAnalisis" class="form-label">Tipo de Análisis</label>
+                                <select id="tipoAnalisis" formControlName="tipoAnalisis" class="form-select"
+                                        [class.is-invalid]="isInvalid('tipoAnalisis')">
+                                    <option value="">Seleccione un análisis</option>
+                                    <option value="Hemograma Completo">Hemograma Completo</option>
+                                    <option value="Perfil Lipídico">Perfil Lipídico</option>
+                                    <option value="Glucosa en Ayunas">Glucosa en Ayunas</option>
+                                    <option value="Examen de Orina">Examen de Orina</option>
+                                </select>
+                                <div *ngIf="isInvalid('tipoAnalisis')" class="invalid-feedback">
+                                    El tipo de análisis es obligatorio.
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="laboratorio" class="form-label">Laboratorio Destino</label>
+                                <select id="laboratorio" formControlName="laboratorio" class="form-select"
+                                        [class.is-invalid]="isInvalid('laboratorio')">
+                                    <option value="">Seleccione un laboratorio</option>
+                                    <option value="Lab Central">Lab Central</option>
+                                    <option value="Clínica Norte">Clínica Norte</option>
+                                    <option value="Hospital Sur">Hospital Sur</option>
+                                </select>
+                                <div *ngIf="isInvalid('laboratorio')" class="invalid-feedback">
+                                    El laboratorio destino es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12 col-md-6">
+                                <label for="fechaSolicitud" class="form-label">Fecha de Solicitud</label>
+                                <input type="date" id="fechaSolicitud" formControlName="fechaSolicitud" class="form-control"
+                                       [class.is-invalid]="isInvalid('fechaSolicitud')">
+                                <div *ngIf="isInvalid('fechaSolicitud')" class="invalid-feedback">
+                                    La fecha es obligatoria.
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="estado" class="form-label">Estado Inicial</label>
+                                <input type="text" id="estado" formControlName="estado" class="form-control bg-light" readonly>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="observaciones" class="form-label">Observaciones (Opcional)</label>
+                            <textarea id="observaciones" formControlName="observaciones" class="form-control" rows="3"
+                                      [class.is-invalid]="isInvalid('observaciones')"></textarea>
+                            <div *ngIf="examenForm.get('observaciones')?.hasError('maxlength')" class="invalid-feedback">
+                                Máximo 250 caracteres.
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-info btn-lg text-white" [disabled]="examenForm.invalid">
+                                Registrar Examen
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

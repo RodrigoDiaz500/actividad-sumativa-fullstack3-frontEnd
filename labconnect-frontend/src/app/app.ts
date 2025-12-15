@@ -1,0 +1,17 @@
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from '../app/shared/navbar/navbar.component'; // <-- Importar
+
+
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  // ¡DEBE ESTAR AQUÍ!
+  imports: [RouterOutlet, NavbarComponent], 
+  templateUrl: './app.html',
+  styleUrls: ['./app.scss']
+})
+export class AppComponent {
+  title = 'labconnect-frontend';
+}

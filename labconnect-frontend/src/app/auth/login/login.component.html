@@ -1,0 +1,51 @@
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-12 col-md-8 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1>Inicio de Sesión</h1>
+                    <p class="mb-0">Gestión de Laboratorios LabConnect</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email de Usuario</label>
+                            <input type="email" id="email" formControlName="email" class="form-control"
+                                   [class.is-invalid]="isInvalid('email')">
+                            <div *ngIf="isInvalid('email')" class="invalid-feedback">
+                                El formato del email es incorrecto.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" id="password" formControlName="password" class="form-control"
+                                   [class.is-invalid]="isInvalid('password')">
+                            <div *ngIf="isInvalid('password')" class="invalid-feedback">
+                                La contraseña es obligatoria.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg" [disabled]="loginForm.invalid">
+                                Ingresar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-center bg-light">
+                    <p class="mb-1">
+                        ¿No tienes cuenta? 
+                        <a [routerLink]="['/registro']">Regístrate aquí</a>
+                    </p>
+                    <p class="mb-0">
+                        <a [routerLink]="['/recuperar-contrasena']">¿Olvidaste tu contraseña?</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

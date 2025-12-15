@@ -1,0 +1,65 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white text-center">
+                    <h2>Modificación de Perfil</h2>
+                    <p class="mb-0">Actualiza tus datos personales en LabConnect</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" id="nombre" formControlName="nombre" class="form-control"
+                                       [class.is-invalid]="isInvalid('nombre')">
+                                <div *ngIf="isInvalid('nombre')" class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" id="apellido" formControlName="apellido" class="form-control"
+                                       [class.is-invalid]="isInvalid('apellido')">
+                                <div *ngIf="isInvalid('apellido')" class="invalid-feedback">
+                                    El apellido es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="email" class="form-label">Email (No Modificable)</label>
+                                <input type="email" id="email" formControlName="email" class="form-control bg-light" readonly>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" id="telefono" formControlName="telefono" class="form-control"
+                                       [class.is-invalid]="isInvalid('telefono')">
+                                <div *ngIf="isInvalid('telefono')" class="invalid-feedback">
+                                    El teléfono es obligatorio y debe contener solo números.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                             <div class="col-12 col-md-6">
+                                <label for="rol" class="form-label">Rol de Usuario</label>
+                                <input type="text" id="rol" formControlName="rol" class="form-control bg-light" readonly>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg" 
+                                    [disabled]="perfilForm.invalid || perfilForm.pristine">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

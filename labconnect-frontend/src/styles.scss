@@ -1,0 +1,32 @@
+/* ========================================================================= */
+/* ESTILOS GLOBALES - TIPOGRAFÍA Y BASE */
+/* ========================================================================= */
+
+// 1. Importación SIMPLE de Bootstrap (Usando la ruta del CSS compilado)
+@import 'bootstrap/dist/css/bootstrap.min.css'; 
+
+// 2. Definición de paleta de colores y estilos personalizados
+body {
+    background-color: #f4f6f9; // Fondo general muy claro y limpio
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilo para los contenedores principales de las tarjetas */
+.card-shadow-custom {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: none;
+    border-radius: 12px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
+}
+.card-shadow-custom:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1); 
+}
+
+/* ========================================================================= */
+/* UTILITIES ESPECÍFICAS DE APP */
+/* ========================================================================= */
+
+.bg-labconnect {
+    background-color: #007bff; /* Color principal */
+    color: white;
+}

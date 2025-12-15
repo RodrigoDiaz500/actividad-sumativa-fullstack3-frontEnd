@@ -1,0 +1,92 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Registro de Nuevo Usuario - LabConnect</h2>
+                </div>
+                <div class="card-body p-4">
+
+                    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" id="nombre" formControlName="nombre" class="form-control"
+                                       [class.is-invalid]="isInvalid('nombre')">
+                                <div *ngIf="isInvalid('nombre')" class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" id="apellido" formControlName="apellido" class="form-control"
+                                       [class.is-invalid]="isInvalid('apellido')">
+                                <div *ngIf="isInvalid('apellido')" class="invalid-feedback">
+                                    El apellido es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" formControlName="email" class="form-control"
+                                       [class.is-invalid]="isInvalid('email')">
+                                <div *ngIf="isInvalid('email')" class="invalid-feedback">
+                                    <span *ngIf="registroForm.get('email')?.hasError('required')">El email es obligatorio.</span>
+                                    <span *ngIf="registroForm.get('email')?.hasError('email')">El formato del email es inválido.</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" id="telefono" formControlName="telefono" class="form-control"
+                                       [class.is-invalid]="isInvalid('telefono')">
+                                <div *ngIf="isInvalid('telefono')" class="invalid-feedback">
+                                    El teléfono es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" formControlName="rol" value="PATIENT">
+
+                        <hr>
+
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" id="password" formControlName="password" class="form-control"
+                                       [class.is-invalid]="isInvalid('password')">
+                                <div *ngIf="isInvalid('password')" class="invalid-feedback">
+                                    <span *ngIf="registroForm.get('password')?.hasError('required')">La contraseña es obligatoria.</span>
+                                    <span *ngIf="registroForm.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+                                    <span *ngIf="registroForm.get('password')?.hasError('pattern')">
+                                        Seguridad: Debe incluir Mayúsculas, Minúsculas, Números y caracteres Especiales (@$!%*?&._-).
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                                <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control"
+                                       [class.is-invalid]="isInvalid('confirmPassword')">
+                                <div *ngIf="isInvalid('confirmPassword')" class="invalid-feedback">
+                                    <span *ngIf="registroForm.get('confirmPassword')?.hasError('required')">La confirmación es obligatoria.</span>
+                                    <span *ngIf="registroForm.get('confirmPassword')?.hasError('passwordMismatch')">¡ERROR! Las contraseñas no coinciden.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg" [disabled]="registroForm.invalid">
+                                Registrar Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <a [routerLink]="['/login']">¿Ya tienes cuenta? Inicia Sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

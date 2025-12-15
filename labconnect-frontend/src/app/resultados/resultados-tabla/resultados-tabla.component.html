@@ -1,0 +1,63 @@
+<div class="card card-shadow-custom p-0 border-0">
+    <div class="card-header bg-white border-bottom p-4">
+        <h2 class="h4 mb-0 text-primary fw-semibold">
+            <i class="fas fa-vial me-2"></i> Mis Resultados de Laboratorio
+        </h2>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-uppercase">ID Examen</th>
+                        <th scope="col" class="text-uppercase">Fecha Solicitud</th>
+                        <th scope="col" class="text-uppercase">Tipo</th>
+                        <th scope="col" class="text-uppercase">Paciente/Médico</th>
+                        <th scope="col" class="text-uppercase">Estado</th>
+                        <th scope="col" class="text-uppercase text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let resultado of resultados">
+                        <td><span class="fw-bold text-muted">{{ resultado.id }}</span></td>
+                        <td>{{ resultado.fecha | date: 'dd/MM/yyyy' }}</td> 
+                        <td>{{ resultado.tipo }}</td>
+                        <td>{{ resultado.tercero }}</td>
+                        
+                        <td>
+                            <span class="badge rounded-pill {{ getBadgeClass(resultado.estado) }} py-2 px-3 fw-semibold">
+                                {{ resultado.estado }}
+                            </span>
+                        </td>
+                        
+                        <td class="text-center">
+                            
+                            <button class="btn btn-sm" 
+                                    [ngClass]="resultado.estado === 'Finalizado' ? 'btn-primary' : 'btn-secondary disabled'"
+                                    (click)="verDetalle(resultado)">
+                                <i class="fas" 
+                                   [ngClass]="{
+                                       'fa-file-pdf': resultado.estado === 'Finalizado',
+                                       'fa-spinner fa-spin': resultado.estado === 'En Progreso', 
+                                       'fa-hourglass-half': resultado.estado === 'Pendiente'
+                                   }"></i> 
+                                {{ resultado.estado === 'Finalizado' ? ' Ver Reporte' : ' ' + resultado.estado }}
+                            </button>
+                            
+                            <button *ngIf="userRole !== 'PATIENT'" 
+                                    class="btn btn-sm btn-outline-secondary ms-2"
+                                    title="Editar Orden">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div *ngIf="resultados.length === 0" class="alert alert-info text-center mt-3">
+            <i class="fas fa-info-circle me-2"></i> No se encontraron resultados que coincidan con la búsqueda.
+        </div>
+    </div>
+</div>
