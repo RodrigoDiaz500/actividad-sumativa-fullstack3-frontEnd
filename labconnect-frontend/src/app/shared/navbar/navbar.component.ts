@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/auth.service';
+import { Subscription, filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -10,99 +11,82 @@ import { AuthService } from '../../auth/auth.service';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
-
+export class NavbarComponent implements OnInit, OnDestroy {
   public userName: string = '';
   public userRole: string = ''; 
-  public showNavbar: boolean = false; // Controla el *ngIf
-  
-  // Enlaces básicos disponibles para todos los usuarios logueados
-  private baseLinks = [
-    { label: 'Resultados', path: '/resultados' },
-    { label: 'Mi Perfil', path: '/perfil' },
-    { label: 'Registrar Examen', path: '/registro-examen' }
+  public showNavbar: boolean = false; 
+  public navLinks: { label: string, path: string }[] = [];
 
-  ];
-  public navLinks: { label: string, path: string }[] = [...this.baseLinks];
+  private subs = new Subscription();
 
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private cdr: ChangeDetectorRef // 🚨 INYECCIÓN CLAVE: Para forzar la actualización de la vista
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // 1. Escuchar eventos de navegación (Crucial para actualizar después del login)
-    this.router.events.subscribe(() => {
-        this.loadUserData();
-        // 🚨 Forzar la detección de cambios para actualizar el *ngIf="showNavbar" inmediatamente
-        this.cdr.detectChanges(); 
-    });
-    
-    // 2. Llamada inicial para cargar el estado si la página se cargó directamente
-    this.loadUserData();
-    this.cdr.detectChanges();
+    this.subs.add(this.authService.user$.subscribe(() => {
+      this.refreshNavbar();
+    }));
+
+    this.subs.add(this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.refreshNavbar();
+    }));
+
+    this.refreshNavbar();
+  }
+
+  refreshNavbar(): void {
+  const user = this.authService.getLoggedInUser();
+  const currentPath = this.router.url;
+
+
+  const isLoginPage = currentPath === '/login' || currentPath.startsWith('/login?');
+  const isRegisterUserPage = currentPath === '/registro' || currentPath.startsWith('/registro?');
+  const isAuthPage = isLoginPage || isRegisterUserPage;
+  this.showNavbar = !!user && !isAuthPage;
+
+  if (this.showNavbar && user) {
+    this.userName = `${user.nombre ?? ''} ${user.apellido ?? ''}`.trim() || 'Usuario';
+    this.userRole = user.rol?.toUpperCase() ?? 'PACIENTE';
+    this.updateNavLinks(user.rol ?? 'PATIENT');
   }
   
-  /**
-   * Carga los datos del usuario logueado (desde localStorage vía AuthService)
-   * y ajusta la visibilidad y los enlaces.
-   */
-  loadUserData(): void {
-    const user = this.authService.getLoggedInUser(); 
-    const currentPath = this.router.url;
+  this.cdr.detectChanges();
+}
+
+  updateNavLinks(role: string): void {
+    const roleUpper = role.toUpperCase();
     
-    const authPaths = ['/login', '/registro', '/recuperar-contrasena'];
+    // Enlaces básicos para TODOS los logueados
+    this.navLinks = [
+      { label: 'Resultados', path: '/resultados' },
+      { label: 'Mi Perfil', path: '/perfil' }
+    ];
 
-    // Condición de visibilidad: El usuario debe existir Y NO estar en una ruta de autenticación
-    const shouldShow = user && !authPaths.some(path => currentPath.startsWith(path));
+    
+    if (['ADMIN', 'MEDIC', 'LAB', 'PATIENT'].includes(roleUpper)) {
+      if (!this.navLinks.some(link => link.path === '/registro-examen')) {
+        this.navLinks.push({ label: 'Registrar Examen', path: '/registro-examen' });
+      }
+    }
 
-    if (shouldShow) { 
-        this.showNavbar = true; 
-        
-        // 1. Asignación de Nombre
-        const nombre = user.nombre || 'Usuario';
-        const apellido = user.apellido || '';
-        this.userName = `${nombre} ${apellido}`.trim();
 
-        // 2. Asignación de Rol
-        this.userRole = user.rol ? user.rol.toUpperCase() : 'INVITADO'; 
-        
-        // 3. Ajustar enlaces
-        this.updateNavLinks(user.rol || 'PATIENT'); 
-        
-    } else {
-        // Ocultar si está en login o no hay usuario
-        this.showNavbar = false; 
-        
-        // Limpieza de datos
-        this.userName = '';
-        this.userRole = '';
-        this.navLinks = [...this.baseLinks];
+    if (roleUpper === 'ADMIN') {
+      if (!this.navLinks.some(link => link.path === '/laboratorios')) {
+        this.navLinks.push({ label: 'Laboratorios', path: '/laboratorios' });
+      }
     }
   }
 
-  /**
-   * Actualiza los enlaces de navegación insertando 'Registrar Examen' si es ADMIN o LAB.
-   */
-  updateNavLinks(role: string): void {
-     this.navLinks = [...this.baseLinks]; 
-     
-     if (role.toUpperCase() === 'ADMIN' || role.toUpperCase() === 'LAB') {
-       const registrationLink = { label: 'Registrar Examen', path: '/registro-examen' };
-       const hasLink = this.navLinks.some(link => link.path === registrationLink.path);
-       
-       if (!hasLink) {
-             this.navLinks.splice(1, 0, registrationLink);
-       }
-     }
-  }
-
-  /**
-   * Cierra la sesión y redirige.
-   */
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 }

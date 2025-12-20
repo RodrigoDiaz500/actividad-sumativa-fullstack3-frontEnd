@@ -1,79 +1,81 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { User } from './registro/user.model'; 
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, BehaviorSubject, map, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { User } from './registro/user.model';
 
-const USER_KEY = 'labconnect_user';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
-
-  private users: User[] = []; 
-
-  constructor(private router: Router) { 
-    // Usuario por defecto para pruebas rápidas
-    this.users.push({
-      nombre: 'Admin',
-      apellido: 'Local',
-      email: 'admin@lab.cl',
-      password: 'Password123!', 
-      rol: 'ADMIN', 
-      telefono: '912345678'
-    }); 
-  }
-
-  registrarUsuario(newUser: User): Observable<{ success: boolean, message: string }> {
-    const existingUser = this.users.find(u => u.email === newUser.email);
-    if (existingUser) {
-      return of({ success: false, message: 'El correo electrónico ya está registrado.' });
-    }
-    if (!newUser.rol) {
-        newUser.rol = 'PATIENT';
-    }
-    this.users.push(newUser);
-    return of({ success: true, message: 'Registro exitoso. Ya puedes iniciar sesión.' });
-  }
-
-  login(email: string, password: string): Observable<{ success: boolean, message: string }> {
-  const user = this.users.find(u => u.email === email);
-
-  if (user && user.password === password) {
-
-    const userToStore = {
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      rol: user.rol || 'PATIENT',
-      telefono: user.telefono
-    };
-
-    localStorage.setItem(USER_KEY, JSON.stringify(userToStore));
-
-    return of({ success: true, message: 'Inicio de sesión exitoso.' });
-  }
-
-  return of({ success: false, message: 'Credenciales inválidas.' });
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  user?: User;
 }
 
-  logout(): void {
-    localStorage.removeItem(USER_KEY);
-    this.router.navigate(['/login']);
-    alert('Has cerrado sesión exitosamente.');
-  }
+const USER_KEY = 'user';
 
-  getLoggedInUser(): User | null {
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private apiUrl = 'http://localhost:8080/api/auth';
+  private usuariosUrl = 'http://localhost:8080/api/usuarios';
+
+  private userSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
+  public user$ = this.userSubject.asObservable();
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  private getUserFromStorage(): User | null {
     const userJson = localStorage.getItem(USER_KEY);
-    if (userJson) {
-        // Asegúrate de castear el resultado a User (sin la password)
-        return JSON.parse(userJson) as User; 
+    try {
+      return userJson ? JSON.parse(userJson) : null;
+    } catch {
+      return null;
     }
-    return null;
-  }
+  }
 
-  getLoggedInUserName(): string {
-    const user = this.getLoggedInUser();
-    return user ? `${user.nombre} ${user.apellido || ''}`.trim() : 'Invitado';
-  }
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map(res => {
+        if (res && (res.user || res.id)) {
+          const userData = res.user || res; 
+          localStorage.setItem(USER_KEY, JSON.stringify(userData));
+          this.userSubject.next(userData);
+          return { success: true, message: 'Login exitoso', user: userData };
+        }
+        return { success: false, message: res.message || 'Credenciales incorrectas' };
+      }),
+      catchError(err => {
+        console.error('Error en el servidor:', err);
+        return of({ success: false, message: 'Error de conexión o credenciales inválidas' });
+      })
+    );
+  }
+
+  registrarUsuario(user: User): Observable<User> {
+    return this.http.post<User>(this.usuariosUrl, user);
+  }
+
+  updateProfile(updatedData: Partial<User>): Observable<User> {
+    const currentUser = this.getLoggedInUser();
+    if (!currentUser || !currentUser.id) throw new Error('Usuario no válido');
+    const userToSend: User = { ...currentUser, ...updatedData };
+    return this.http.put<User>(`${this.usuariosUrl}/${currentUser.id}`, userToSend).pipe(
+      tap(updatedUser => {
+        localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+        this.userSubject.next(updatedUser);
+      })
+    );
+  }
+
+  logout(): void {
+    localStorage.removeItem(USER_KEY);
+    this.userSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  getLoggedInUser(): User | null {
+    return this.userSubject.value;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.userSubject.value || !!localStorage.getItem(USER_KEY);
+  }
 }

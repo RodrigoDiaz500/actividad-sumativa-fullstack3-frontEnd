@@ -7,9 +7,9 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router'; // <-- Router importado
-import { AuthService } from '../auth.service'; // <-- AuthService importado
-import { User } from './user.model'; // <-- User model importado
+import { Router, RouterLink } from '@angular/router'; 
+import { AuthService } from '../auth.service'; 
+import { User } from './user.model'; 
 
 @Component({
   selector: 'app-registro',
@@ -26,37 +26,36 @@ export class RegistroComponent implements OnInit {
 
   public registroForm: FormGroup;
   private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,20}$/;
-  public submitted: boolean = false; // Variable de control para el envío
+  public submitted: boolean = false; 
 
   constructor(
     private fb: FormBuilder, 
     private router: Router, 
-    private authService: AuthService // Inyección
+    private authService: AuthService 
   ) { 
     this.registroForm = this.fb.group({});
   }
 
   ngOnInit(): void {
-    this.registroForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      apellido: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email]],
-      rol: ['', [Validators.required]], 
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8), 
-        Validators.maxLength(20), 
-        Validators.pattern(this.passwordPattern)
-      ]],
-      confirmPassword: ['', [Validators.required]],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]] // Agregado campo telefono
-    }, {
-      validators: this.passwordMatchValidator 
-    });
-  }
+  this.registroForm = this.fb.group({
+    nombre: ['', [Validators.required, Validators.maxLength(50)]],
+    apellido: ['', [Validators.required, Validators.maxLength(50)]],
+    email: ['', [Validators.required, Validators.email]],
+    rol: ['PATIENT', [Validators.required]],
+    password: ['', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(20),
+      Validators.pattern(this.passwordPattern)
+    ]],
+    confirmPassword: ['', [Validators.required]],
+    telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]]
+  }, {
+    validators: this.passwordMatchValidator
+  });
+}
 
   private passwordMatchValidator(form: AbstractControl) {
-    // ... (Lógica de validación de coincidencia de contraseña) ...
     const passwordControl = form.get('password');
     const confirmPasswordControl = form.get('confirmPassword');
     
@@ -81,29 +80,34 @@ export class RegistroComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.submitted = true;
+  this.submitted = true;
 
-    if (this.registroForm.valid) {
-      // Casteamos el valor del formulario al modelo de User
-      const newUser: User = this.registroForm.value as User;
-      
-      this.authService.registrarUsuario(newUser).subscribe(
-        response => {
-          if (response.success) {
-            alert(response.message);
-            // Redirigir al login después del registro exitoso
-            this.router.navigate(['/login']); 
-          } else {
-            alert(response.message);
-          }
-        },
-        () => {
-          alert('Ocurrió un error inesperado durante el registro.');
-        }
-      );
-    } else {
-      this.registroForm.markAllAsTouched();
-    }
+  if (this.registroForm.invalid) {
+    this.registroForm.markAllAsTouched();
+    return;
   }
+
+  const formValue = this.registroForm.value;
+
+
+  const newUser: User = {
+    nombre: formValue.nombre,
+    apellido: formValue.apellido,
+    email: formValue.email,
+    password: formValue.password,
+    rol: formValue.rol,
+    telefono: formValue.telefono
+  };
+
+  this.authService.registrarUsuario(newUser).subscribe({
+    next: () => {
+      alert('Usuario registrado correctamente');
+      this.router.navigate(['/login']);
+    },
+    error: () => {
+      alert('Error al registrar usuario');
+    }
+  });
+}
 
 }

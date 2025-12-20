@@ -5,18 +5,21 @@ import { RecuperarContrasenaComponent } from './auth/recuperar-contrasena/recupe
 import { PerfilComponent } from './auth/perfil/perfil.component'; 
 import { ResultadosContainerComponent } from './resultados/resultados-container/resultados-container.component'; 
 import { RegistroExamenComponent } from './examenes/registro-examen/registro-examen.component'; // <-- NUEVO: Importar
+import { LaboratoriosAdminComponent } from './laboratorios/laboratorios-admin.component';
+
 
 export const routes: Routes = [
-  // AUTENTICACIÓN
+  
   { path: 'login', component: LoginComponent, title: 'Inicio de Sesión' },
   { path: 'registro', component: RegistroComponent, title: 'Registro de Usuarios' },
   { path: 'recuperar-contrasena', component: RecuperarContrasenaComponent, title: 'Recuperar Contraseña' },
 
-  // FUNCIONALIDAD
+  
   { path: 'resultados', component: ResultadosContainerComponent, title: 'Consulta de Resultados' },
   { path: 'perfil', component: PerfilComponent, title: 'Modificar Perfil' },
   { path: 'registro-examen', component: RegistroExamenComponent, title: 'Registrar Examen' }, // <-- NUEVA RUTA
+  { path: 'laboratorios', component: LaboratoriosAdminComponent },
 
-  // RUTA POR DEFECTO
+  
   { path: '', redirectTo: '/login', pathMatch: 'full' }, 
 ];

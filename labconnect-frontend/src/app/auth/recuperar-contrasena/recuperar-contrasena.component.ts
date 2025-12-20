@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router'; // <-- CORRECCIÓN: RouterLink importado
+import { RouterLink } from '@angular/router'; 
 
 @Component({
   selector: 'app-recuperar-contrasena',
@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router'; // <-- CORRECCIÓN: RouterLink imp
   imports: [
     ReactiveFormsModule, 
     CommonModule,
-    RouterLink // <-- AGREGADO
+    RouterLink 
   ],
   templateUrl: './recuperar-contrasena.component.html',
   styleUrls: ['./recuperar-contrasena.component.scss']

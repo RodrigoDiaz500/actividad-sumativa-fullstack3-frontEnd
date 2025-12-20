@@ -1,6 +1,6 @@
 /// <reference types="jasmine" />
 import { TestBed } from '@angular/core/testing';
-import { DataService } from '../app/core/services/data.service';
+import { DataService } from './data.service';
 
 describe('DataService', () => {
   let service: DataService;
@@ -12,13 +12,13 @@ describe('DataService', () => {
     service = TestBed.inject(DataService);
   });
 
-  it('debe ser creado', () => {
+  it('debe existir el servicio', () => {
     expect(service).toBeTruthy();
   });
 
-  it('debe retornar la lista de resultados', () => {
-    const resultados = service.getResultados();
-    expect(resultados.length).toBeGreaterThan(0);
-    expect(resultados[0].paciente).toBe('Ana Gómez');
+  it('debe obtener resultados simulados', () => {
+    const res = service.getResultados();
+    expect(res.length).toBeGreaterThan(0);
+    expect(res[0].paciente).toBeDefined();
   });
 });

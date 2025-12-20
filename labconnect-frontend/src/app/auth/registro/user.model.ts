@@ -1,9 +1,11 @@
-// Define la estructura básica de un usuario para el registro y la autenticación
+
+import { UserRole } from '../../auth/registro/user-role.type';
 export interface User {
-    nombre: string;
-    apellido: string;
-    email: string;
-    password: string; // En un entorno real, esto sería un hash
-    rol: 'ADMIN' | 'LAB' | 'PATIENT'; // Rol es crucial para la lógica de privilegios
-    telefono: string; // Se usará en el formulario de Perfil
+  id?: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  rol: UserRole;
+  telefono: string;
 }

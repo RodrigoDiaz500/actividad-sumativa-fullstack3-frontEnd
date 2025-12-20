@@ -7,7 +7,6 @@ import { NavbarComponent } from '../app/shared/navbar/navbar.component'; // <-- 
 @Component({
   selector: 'app-root',
   standalone: true,
-  // ¡DEBE ESTAR AQUÍ!
   imports: [RouterOutlet, NavbarComponent], 
   templateUrl: './app.html',
   styleUrls: ['./app.scss']

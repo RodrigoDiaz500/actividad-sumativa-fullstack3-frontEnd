@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-// Definición de Interfaz para la Colección de Datos
+
 export interface ResultadoAnalisis {
   id: number;
   paciente: string;
@@ -8,7 +8,7 @@ export interface ResultadoAnalisis {
   laboratorio: string;
   fecha: Date;
   estado: 'Pendiente' | 'En Proceso' | 'Finalizado';
-  resultadoUrl: string; // URL del reporte
+  resultadoUrl: string; 
 }
 
 @Injectable({
@@ -16,7 +16,7 @@ export interface ResultadoAnalisis {
 })
 export class DataService {
 
-  // Colección de Resultados de Análisis Simulado (Arreglo de objetos)
+  // Colección de Resultados de Análisis Simulado 
   private resultados: ResultadoAnalisis[] = [
     { id: 101, paciente: 'Ana Gómez', analisis: 'Hemograma Completo', laboratorio: 'Lab Central', fecha: new Date('2025-11-20'), estado: 'Finalizado', resultadoUrl: '/reporte/101' },
     { id: 102, paciente: 'Carlos Díaz', analisis: 'Glucosa en Ayunas', laboratorio: 'Clínica Norte', fecha: new Date('2025-12-01'), estado: 'En Proceso', resultadoUrl: '' },
